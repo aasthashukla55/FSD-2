@@ -1,1 +1,7 @@
-**__pycache__
+# Best practice: ignore the folder and its contents
+**/__pycache__
+
+# Also ignore individual compiled files in case they exist outside a pycache folder
+*.pyc
+*.pyo
+*.pyd
