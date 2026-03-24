@@ -1,7 +1,8 @@
-Aim
+## Aim
 
 The primary objective of this experiment is to demonstrate a decoupled microservices architecture. It focuses on how independent services (Customer and Order) communicate over HTTP to aggregate data, simulating a distributed backend system where each service manages its own specific data domain.
-Technologies and Frameworks
+
+## Technologies and Frameworks
 
     Language: Python
 
@@ -11,7 +12,7 @@ Technologies and Frameworks
 
     Data Format: JSON (Standard for API responses and inter-service data exchange)
 
-Core Concepts
+## Core Concepts
 1. Service Decoupling
 
 Instead of a monolithic database, the application logic is split into two specialized services:
@@ -37,7 +38,7 @@ The experiment implements basic network reliability patterns:
 
     PUT: Used by the Order Service to handle state changes, specifically updating the status of an existing order via JSON payloads.
 
-Learning Outcomes
+## Learning Outcomes
 
     Distributed Architecture: Understanding how to manage multiple web servers running simultaneously on different local ports.
 
