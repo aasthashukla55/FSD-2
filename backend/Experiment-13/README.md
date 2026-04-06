@@ -29,13 +29,15 @@ To connect to a managed service like Aiven, a Connection String is required. The
 mysql+pymysql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DB_NAME>
 
 ## API Endpoints
-Method	    Endpoint	    Description
-GET	        /	            Health check / Home
-POST	    /students	    Create a new student record (Validated)
-GET     	/students	    Retrieve a list of all students
-GET	        /students/<id>	Retrieve a specific student by ID
-PUT	        /students/<id>	Update an existing student (Partial validation allowed)
-DELETE  	/students/<id>	Remove a student record from the database
+
+| Method | Endpoint           | Description |
+|--------|-------------------|-------------|
+| GET    | `/`               | Health check / Home |
+| POST   | `/students`       | Create a new student record (Validated) |
+| GET    | `/students`       | Retrieve a list of all students |
+| GET    | `/students/<id>`  | Retrieve a specific student by ID |
+| PUT    | `/students/<id>`  | Update an existing student (Partial validation allowed) |
+| DELETE | `/students/<id>`  | Remove a student record from the database |
 
 ## Learning Outcomes
 
