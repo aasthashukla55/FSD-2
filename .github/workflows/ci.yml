@@ -39,7 +39,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: Testing/frontend-exp-6
+        working-directory: Testing/Experiment-6
 
     steps:
       - name: Checkout code
