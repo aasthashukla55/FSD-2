@@ -1,0 +1,48 @@
+name: Experiment-20 CI/CD
+
+on:
+  push:
+    paths:
+      - 'Experiment-20(ci-cd)/**' # Only run if this folder changes
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: Experiment-20(ci-cd)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Tests via Docker Compose
+        run: |
+          # Use 'run' to execute ONLY pytest. 
+          # This overrides the Gunicorn command so the container exits when tests finish.
+          docker compose run --rm backend pytest
+
+      - name: Login to Docker Hub
+        # The 'run' command above returns a non-zero exit code if tests fail, 
+        # so success() will only be true if all tests passed.
+        if: success() && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push Production Image
+        if: success() && github.event_name == 'push'
+        uses: docker/build-push-action@v5
+        with:
+          context: Experiment-20(ci-cd)
+          push: true
+          # Note: It's good practice to tag with the commit SHA as well as latest
+          tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/flask-student-api:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/flask-student-api:${{ github.sha }}
