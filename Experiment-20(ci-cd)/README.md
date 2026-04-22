@@ -1,74 +1,84 @@
 ## 1. Aim
 
-To connect a backend application with a database and perform CRUD (Create, Read, Update, Delete) operations along with input validation.
+To integrate a Continuous Deployment (CD) pipeline into the existing Testing framework (Experiment-16), create a production-ready Docker image of a backend application, and automate the deployment workflow using GitHub Actions.
 
-## 2. Tools & Technologies Used
-Python
-Flask
-Flask-SQLAlchemy
-MySQL (Aiven Cloud)
-PyMySQL
-Marshmallow
-python-dotenv
-Postman / Curl
+## 2. Theory
+Continuous Integration & Continuous Deployment (CI/CD)
 
-## 3. Theory
-# 3.1 REST API
+CI/CD is a method to frequently deliver apps to customers by introducing automation into the stages of app development.
 
-A REST API enables communication between client and server using HTTP methods:
+    Continuous Integration (CI): Automates the process of merging code changes and running tests. It acts as a gatekeeper to ensure that new code doesn't break existing functionality.
 
-GET → Retrieve data
-POST → Create data
-PUT → Update data
-DELETE → Remove data
-# 3.2 ORM (Object Relational Mapping)
+    Continuous Deployment (CD): Automatically picks up the validated code from the CI stage, builds a production artifact (Docker Image), and pushes it to a registry or server.
 
-Flask-SQLAlchemy maps Python classes to database tables, eliminating the need to write raw SQL queries.
+Why Docker is Preferred for CI/CD
 
-# 3.3 CRUD Operations
-Create → Insert new records
-Read → Fetch records
-Update → Modify existing records
-Delete → Remove records
-3.4 Validation using Marshmallow
+Docker is the industry standard for CI/CD pipelines because it offers Environment Parity—the environment where you test is identical to the environment where you deploy.
 
-# Marshmallow is used to:
+    Platform Independence: Docker containers wrap the application and all its dependencies (libraries, OS binaries, configurations) into a single package. This makes the application agnostic to the host OS. Whether the server runs Ubuntu, Fedora, or Alpine Linux, the container behaves exactly the same.
 
-Ensure required fields are present
-Validate data types
-Apply constraints (e.g., age range, string length)
-3.5 Cloud Database (Aiven)
+    Irrespective of Configuration: Traditionally, a server needed "pre-configuration" (installing Python, MySQL drivers, etc.). With Docker, the server only needs the Docker Engine. All specific configurations are "baked" into the image, eliminating the "it works on my machine" error.
 
-The database is hosted on Aiven, which provides:
+    Isolation & Scalability: Each CI run happens in a fresh, isolated container. This prevents "state leakage" where data from a previous test run affects a new one.
 
-Remote database access
-Secure connections using credentials
-Scalability and reliability
+## 3. Project Structure
+Plaintext
 
-## 4. API Endpoints
+backend/Experiment-13/
+├── app.py              # Flask Application
+├── requirements.txt    # Python Dependencies
+├── tests/              # Pytest Suite
+├── Dockerfile          # Production Build Instructions
+├── docker-compose.yml  # Local & CI Orchestration
+└── .github/workflows/  # CI/CD Pipeline Configuration
 
-| No. | Endpoint           | Method | Description            | Request Body (Example) |
-|-----|-------------------|--------|------------------------|------------------------|
-| 1   | `/students`       | POST   | Create a new student   | `{ "uid": "U101", "name": "John", "age": 20 }` |
-| 2   | `/students`       | GET    | Get all students       | Not Required |
-| 3   | `/students/<id>`  | GET    | Get student by ID      | Not Required |
-| 4   | `/students/<id>`  | PUT    | Update student         | `{ "name": "Updated Name" }` |
-| 5   | `/students/<id>`  | DELETE | Delete student         | Not Required |
-| 6   | `/`               | GET    | API status check       | Not Required |
+## 4. Implementation Details
+Docker Configuration
 
-## Learning Outcomes
+The docker-compose.yml is configured to handle a MySQL database and the Flask backend. In the CI environment, we utilize depends_on with a service_healthy condition to ensure the database is ready before tests begin.
+GitHub Actions Workflow
 
-1. Learned how to connect Flask backend with MySQL database
-2. Understood ORM concepts using Flask-SQLAlchemy
-3. Implemented RESTful APIs with proper HTTP methods
-4. Gained hands-on experience with CRUD operations
+The workflow is triggered on a push to the main branch. It consists of two main phases:
 
-## Screenshots
-1.  `/students`       | POST   | Create a new student 
-![alt text](1.png)
-2.  `/students`       | GET    | Get all students    
-![alt text](2.png)
-3.  `/students/<id>`  | PUT    | Update student   
-![alt text](3.png) 
-4.  `/students/<id>`  | DELETE | Delete student    
-![alt text](4.png)
+    The Test Phase: Uses docker compose run --rm backend pytest. This creates a temporary container to run tests and then aborts/exits immediately so the pipeline can proceed.
+
+    The Deployment Phase: Once tests pass, the docker/build-push-action builds a fresh production image and pushes it to Docker Hub.
+
+## 5. How to Run
+Local Development
+
+To run the server locally:
+Bash
+
+docker compose up --build
+
+Running Tests (CI Logic)
+
+To simulate the CI test run:
+Bash
+
+docker compose run --rm backend pytest
+
+## 6. Learning Outcomes
+
+Automate Software Workflows: Design and implement a multi-stage pipeline using GitHub Actions.
+
+Implement Environment Parity: Use Docker to ensure that the testing environment exactly matches the production environment.
+
+Manage Container Lifecycle in CI: Use docker compose run to execute transient test processes that exit cleanly to allow pipeline progression.
+
+Handle Secrets Management: Securely store and use sensitive credentials (Docker Hub tokens) within a CI/CD environment.
+
+Apply Platform Independence: Package applications so they can be deployed on any host OS or hardware configuration without manual intervention.
+
+## 7. Screenshots
+
+1. Building docker image
+![alt text](image.png)
+
+2. Testing database endpoint
+![alt text](image-1.png)
+
+3. Running Containers
+![alt text](image-2.png)
+
