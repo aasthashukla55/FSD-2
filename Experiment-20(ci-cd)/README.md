@@ -82,3 +82,5 @@ Apply Platform Independence: Package applications so they can be deployed on any
 3. Running Containers
 ![alt text](image-2.png)
 
+4. GitHub actions
+![alt text](image-3.png)
